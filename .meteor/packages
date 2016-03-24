@@ -29,3 +29,11 @@ useraccounts:flow-routing
 accounts-password
 arillo:flow-router-helpers
 meteorhacks:fast-render
+alanning:roles
+cfs:standard-packages
+cfs:gridfs
+cfs:ui
+cfs:graphicsmagick
+zimme:active-route
+momentjs:moment
+cfs:access-point
