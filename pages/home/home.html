@@ -1,0 +1,17 @@
+<template name="home">
+
+
+  <div class="ui vertical stripe segment">
+    <div class="ui text container">
+      <h3 class="ui header">All Time Favorites</h3>
+      <p>These fantastic five images have been viewed more than any other.</p>
+      <div class="ui link cards">
+        {{#each top5}}
+          {{> thumbnail}}
+        {{/each}}
+      </div>
+    </div>
+  </div>
+
+  
+</template>

@@ -1,0 +1,38 @@
+<template name="profile">
+    <div class="ui vertical stripe segment">
+        <form class="ui form container">
+            <!--
+            <div class="field">
+                <label>Email</label>
+                <input name="email" placeholder="Email" type="text" value={{email}}>
+            </div>
+            We can add changing emails later if we want, but
+            since it requires extra magic, like validation, 
+            and other yadda yadda. not right now. -->
+           
+            <div class="field">
+                <label>First Name</label>
+                <input name="firstName" placeholder="First Name" type="text" value={{firstName}}>
+            </div>
+            
+            <div class="field">
+                <label>Last Name</label>
+                <input name="lastName" placeholder="Last Name" type="text" value={{lastName}}>
+            </div>
+            
+            <div class="field">
+                <label>Phone</label>
+                <input name="phone" placeholder="Phone" type="text" value={{phone}}>
+            </div>
+            
+            <div class="field">
+                <label>Address</label>
+                <input name="address" placeholder="Address" type="text" value={{address}}>
+            </div>
+        
+            <button class="ui button" type="submit">Submit</button>
+        
+        </form>
+    </div>
+</template>
+

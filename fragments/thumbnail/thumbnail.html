@@ -1,0 +1,25 @@
+<template name="thumbnail">
+    {{#with FS.GetFile "images" _id}}
+      <div class="card">
+        <a class="image" href={{pathFor 'view' imageId=_id}}>
+          <img src="{{this.url store='thumbnails'}}">
+        </a>
+        <div class="content">
+          <div class="header">{{metadata.title}}</div>
+          <div class="meta">
+            <a>{{metadata.location}}</a>
+          </div>
+          <div class="description">{{metadata.description}}</div>
+        </div>
+        <div class="extra content">
+          <span class="right floated">
+            {{cal}}
+          </span>
+          <span>
+            <i class="user icon"></i>
+            {{owner}}
+          </span>
+        </div>
+      </div>
+    {{/with}}
+</template>

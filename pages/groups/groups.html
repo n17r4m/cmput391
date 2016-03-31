@@ -1,0 +1,99 @@
+<template name="groups">
+    <div class="ui vertical stripe segment">
+
+        {{#if topmessage}}
+            <div class="ui text container">
+                <div class="ui message">
+                    <p>{{topmessage}}</p>
+                </div>
+            </div>
+        {{/if}}
+
+        
+        {{#if selectedgroup}}
+            <div class="ui text container">
+                <a class="ui button back icon">
+                    <i class="arrow left icon"></i>
+                    Back
+                </a>
+            </div>
+        
+            {{#with selectedgroup}}
+                <div class="ui text container">
+                    <h3 class="header">Group: {{this}}</h3>
+                    
+                    
+                    <div class="ui form">
+                        <h4 class="header">Invite other users</h4>
+                        <div class="field">
+                            <label>Username</label>
+                            <input name="username" placeholder="Username..." type="text">
+                        </div>
+                        <div class="ui invite submit button">Invite</div>
+                    </div>
+                    
+                    
+                    <h4 class="header">Members</h4>
+                    <div class="ui list">
+                        {{#each groupusers}}
+                            <div class="inline item">
+                                <a class="ui item remove icon" data-username={{username}}>
+                                    <i class="red remove icon"></i>
+                                </a>
+                                {{username}} ({{profile.firstName}})
+                            </div>
+                        {{/each}}
+                    </div>
+                </div>
+            {{/with}}
+            
+        {{else}}
+                  
+            <div class="ui text container">
+                <h3 class="header">My Groups</h3>
+                <div class="ui list">
+                    {{#each groups}}
+                        <div class="item">
+                            <div class="header">
+                                <a class="group">{{this}}</a>
+                            </div>
+                            <div class="description">
+                                {{count}} Members
+                            </div>
+                        </div>
+                    {{/each}}
+                </div>
+            </div>
+            
+        {{/if}}
+        
+        <div class="ui hidden divider"></div>
+        
+        <form class="ui text form container">
+            <h3 class="header">Create Group</h3>
+            <div class="field">
+                <label>Group Name</label>
+                <input name="groupName" placeholder="Group Name" type="text">
+            </div>
+            <!--
+            <div class="field">
+                <label>Users Allowed</label>
+                <input name="userNames" placeholder="Enter user names that are part of the group." type="text">
+            </div>
+            -->
+            <button class="ui button" type="submit">Create</button>
+        
+        </form>
+        
+        
+        {{#if bottommessage}}
+            <div class="ui text container">
+                <div class="ui message">
+                    <p>{{bottommessage}}</p>
+                </div>
+            </div>
+        {{/if}}
+        
+    </div>
+</template>
+

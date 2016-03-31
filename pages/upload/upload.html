@@ -1,0 +1,68 @@
+<template name="upload">
+  <div class="ui vertical stripe segment">
+    <div class="ui text container">
+      <h3 class="ui header">Upload</h3>
+      
+      <form class="ui form">
+      <div class="field">
+        <label>Title</label>
+        <input name="title" placeholder="Title..." type="text">
+      </div>
+      
+      <div class="field">
+        <label>Location</label>
+        <input name="location" placeholder="Location..." type="text">
+      </div>
+      
+      <div class="field">
+        <label>Date</label>
+        <input name="date" placeholder="Date..." type="text" value={{today}}>
+      </div>
+      
+      <div class="privacy field">
+        <label>Privacy</label>
+        <select name="permitted" class="ui dropdown">
+          <option value="owner">Private</option>
+          <option value="group">Group</option>
+          <option value="public">Public</option>
+        </select>
+        {{#if isGroupPermitted}}
+          {{> uploadGroupDropdown}}
+        {{/if}}
+      </div>
+      
+      <div class="field">
+        <label>Description</label>
+        <input name="description" placeholder="Description..." type="text">
+      </div>
+      
+      <div class="field">
+          <div class="ui action input">
+              <input type="text" id="_fileInput">
+              <label for="fileInput" class="ui icon button">
+                   <i class="photo basic icon"></i>
+                   <input class="fileInput" type="file" id="fileInput" name="image" multiple style="display: none">
+              </label>
+          </div>
+      </div>      
+      
+      
+      {{#each images}}
+        {{#unless this.isUploaded}}
+        {{> FS.UploadProgressBar semantic=true}}
+        {{/unless}}
+      {{/each}}
+      
+    </form>
+      
+    </div>
+  </div>
+</template>
+
+<template name="uploadGroupDropdown">
+  <select name="groups" class="ui dropdown">
+    {{#each groups}}
+      <option value="{{this}}">{{this}}</option>
+    {{/each}}
+  </select>
+</template>

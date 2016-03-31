@@ -1,0 +1,118 @@
+<template name="view">
+    <div class="ui vertical stripe segment">
+        <div class="ui text container">
+        {{#with image}}
+        {{#with FS.GetFile "images" _id}}
+            <h2 class="header">{{metadata.title}}</h2>
+            <div class="content">
+              <div class="meta">
+                <i class="user icon"></i>
+                {{owner}}
+              </div>
+              <div class="description">
+                <i class="info icon"></i>
+                {{metadata.description}}
+              </div>
+            </div>
+            <div class="extra content">
+              <div>
+                <i class="calendar icon"></i>
+                {{calendar}}
+              </div>
+              <div>
+                <i class="location arrow icon"></i>
+                {{metadata.location}}
+              </div>
+            </div>
+          <div class="content">
+            <img src="{{this.url store='images'}}" width="100%">
+          </div>
+          
+          
+          
+          {{#if isOwner}}
+            {{#if editing}}
+              {{> editimage}}
+            {{else}}
+              <button class="ui edit blue icon button" type="submit">
+                <i class="edit icon"></i>
+                Edit
+              </button>
+              <button class="ui delete red icon button" type="submit">
+                <i class="remove icon"></i>
+                Delete
+              </button>
+            {{/if}}
+          {{/if}}
+          
+        {{/with}}    
+        {{/with}}
+        </div>
+    </div>
+</template>
+
+
+<template name="editimage">
+  <div class="ui vertical stripe segment">
+    <div class="ui text container">
+      
+      <h3 class="ui header">Image Properties</h3>
+      
+      <form class="ui form">
+        
+        {{#with metadata}}
+        
+          <div class="field">
+            <label>Title</label>
+            <input name="title" placeholder="Title..." type="text" value={{title}}>
+          </div>
+          
+          <div class="field">
+            <label>Location</label>
+            <input name="location" placeholder="Location..." type="text" value={{location}}>
+          </div>
+          
+          <div class="field">
+            <label>Date</label>
+            <input name="date" placeholder="Date..." type="text" value={{dateformatted}}>
+          </div>
+          
+          <div class="privacy field">
+            <label>Privacy</label>
+            <select name="permitted" class="ui dropdown" value={{permitted}}>
+              <option value="owner">Private</option>
+              <option value="group">Groups</option>
+              <option value="public">Public</option>
+            </select>
+            {{#if isGroupPermitted}}
+              {{> editImageGroupDropdown}}
+            {{/if}}
+          </div>
+          
+          <div class="field">
+            <label>Description</label>
+            <input name="description" placeholder="Description..." type="text" value={{description}}>
+          </div>
+          
+          <div class="ui save submit blue button">
+            Save Changes
+          </div>
+          
+          <div class="ui cancel button">
+            Cancel
+          </div>
+        
+        {{/with}}
+      </form>
+      
+    </div>
+  </div>
+</template>
+
+<template name="editImageGroupDropdown">
+  <select name="groups" class="ui dropdown">
+    {{#each groups}}
+      <option value="{{this}}">{{this}}</option>
+    {{/each}}
+  </select>
+</template>
