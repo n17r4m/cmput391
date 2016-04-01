@@ -1,83 +1,100 @@
 <template name="admin">
   <div class="ui vertical stripe segment">
-      <!--User: {
-        _id: String
-        username: String
-        emails: [
-            { address: String, verified: Boolean },
-            ...
-        ]
-        profile: {
-            address: String
-            firstName: String
-            lastName: String
-            phone: String
-        }
-    }
-      -->
-      
-    <form class="ui form text container">
-      <div class="two fields">
-        <div class="field">
-          <label>Date Range</label>
-          <input name="daterange" placeholder="From date - To Date" type="text" value={{daterange}}>
-        </div>
-        <div class="field">
-          <label>Timespan</label>
-          <select name="timespan" class="ui dropdown">
-            <option value="all">All Time</option>
-            <option value="year">Yearly</option>
-            <option value="month">Monthly</option>
-            <option value="week">Weekly</option>
-          </select>
-        </div>
-      </div>
-      <div class="two fields">
-        <div class="field">
-          <label>Pictures by subject</label>
-          <input name="subject" type="text" placeholder="Keywords.." value={{subject}}>
-        </div>
-        <div class="field">
-          <label>Pictures by user</label>
-          <input name="user" type="text" placeholder="Username..." value={{user.username}}>
-        </div>
-      </div>
-    </form>
-    
-    {{#if userNotFound}}
-      <div class="ui text container">
-        <div class="ui icon message">
-          <i class="user icon"></i>
-          <div class="content">
-            <div class="header">
-              User not found
-            </div>
-            <p>Sorry, there was no user found with that name</p>
+
+    {{#if isAdmin}}
+        
+      <form class="ui form text container">
+        <div class="two fields">
+          <div class="field">
+            <label>Date Range</label>
+            <input name="daterange" placeholder="From date - To Date" type="text" value={{daterange}}>
+          </div>
+          <div class="field">
+            <label>Timespan</label>
+            <select name="timespan" class="ui dropdown">
+              <option selected={{timespanIs "all"}} value="all">All Time</option>
+              <option selected={{timespanIs "year"}} value="year">Yearly</option>
+              <option selected={{timespanIs "month"}} value="month">Monthly</option>
+              <option selected={{timespanIs "week"}} value="week">Weekly</option>
+            </select>
           </div>
         </div>
-      </div>
-    {{/if}}
+        <div class="two fields">
+          <div class="field">
+            <label style="float:right;"><input type="checkbox" class="ui checkbox allsubject" checked={{allsubject}}> All</label>
+            <label>Pictures by subject</label>
+            <input name="subject" type="text" placeholder="Keywords.." value={{subject}} disabled={{allsubject}}>
+          </div>
+          <div class="field">
+            <label style="float:right;"><input type="checkbox" class="ui checkbox alluser" checked={{alluser}}> All</label>
+            <label>Pictures by user</label>
+            <input name="user" type="text" placeholder="Username..." value={{user.username}} disabled={{alluser}}>
+          </div>
+        </div>
+      </form>
       
-    <div class="ui horizontal divider">
-      Results 
-      {{#if subject}}
-        for "{{subject}}"
-      {{/if}} 
-      {{#if user}}
-        by {{user.username}} ({{user.profile.firstName}} {{user.profile.lastName}})
+      {{#if userNotFound}}
+        <div class="ui text container">
+          <div class="ui icon message">
+            <i class="user icon"></i>
+            <div class="content">
+              <div class="header">
+                User not found
+              </div>
+              <p>Sorry, there was no user found with that name</p>
+            </div>
+          </div>
+        </div>
       {{/if}}
-    </div>
-    
-    
-    <div class="ui text container">
-    {{#each timeslots}}
-    
-      <h4 class="ui header">{{calendar start}} - {{calendar end}}</h4>
-      
-      <p>Images: {{numimages start end}}</p>
         
-    {{/each}}
-    </div>
+      <div class="ui horizontal divider">
+        Results 
+        {{#if subject}}
+          for "{{subject}}"
+        {{/if}} 
+        {{#if user}}
+          by {{user.username}} ({{user.profile.firstName}} {{user.profile.lastName}})
+        {{/if}}
+      </div>
+      
+      
+      <div class="ui text container">
+        {{#each timeslots}}
+          <h4 class="ui header">{{calendar start}} - {{calendar end}}</h4>
+          <p>Images: {{numimages start end}}</p>
+        {{/each}}
+        
+        {{#if allsubject}}
+          <h3 class="header">Subjects</h3>
+          {{#each timeslots}}
+            <h4 class="ui header">{{calendar start}} - {{calendar end}}</h4>
+            {{#each subjects}}
+              <h4 class="ui header">{{this}}</h4>
+              <p>Images: {{numimages ../start ../end subject=this}}</p>
+            {{/each}}
+          {{/each}}
+        {{/if}}
+        
+        {{#if alluser}}
+          <h3 class="header">Users</h3>
+          {{#each timeslots}}
+            <h4 class="ui header">{{calendar start}} - {{calendar end}}</h4>
+            {{#each users}}
+              <h4 class="ui header">{{this}}</h4>
+              <p>Images: {{numimages ../start ../end user=this}}</p>
+            {{/each}}
+          {{/each}}
+        {{/if}}
+        
+      </div>
+  
+    {{else}}
+    
+      <div class="ui text container">
+        <p>Permission denied</p>
+      </div>
+      
+    {{/if}}
   
   </div>
 </template>     

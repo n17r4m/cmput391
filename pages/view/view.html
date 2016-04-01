@@ -79,10 +79,10 @@
           
           <div class="privacy field">
             <label>Privacy</label>
-            <select name="permitted" class="ui dropdown" value={{permitted}}>
-              <option value="owner">Private</option>
-              <option value="group">Groups</option>
-              <option value="public">Public</option>
+            <select name="permitted" class="ui dropdown">
+              <option selected={{isPermitted "owner"}} value="owner">Private</option>
+              <option selected={{isPermitted "group"}} value="group">Groups</option>
+              <option selected={{isPermitted "public"}} value="public">Public</option>
             </select>
             {{#if isGroupPermitted}}
               {{> editImageGroupDropdown}}
@@ -112,7 +112,7 @@
 <template name="editImageGroupDropdown">
   <select name="groups" class="ui dropdown">
     {{#each groups}}
-      <option value="{{this}}">{{this}}</option>
+      <option selected={{isGroup ../group this}} value="{{this}}">{{this}}</option>
     {{/each}}
   </select>
 </template>

@@ -11,17 +11,17 @@
     <div class="right menu">
         {{#if currentUser}}
             <div class="item">
-                <a class="ui icon button" href={{pathFor "profile"}}>
+                <a class="ui icon button" href={{pathFor "/profile"}}>
                     <i class="user icon"></i>
                 </a>
             </div>
             <div class="item">
-                <a class="ui icon button" href={{pathFor "groups"}}>
+                <a class="ui icon button" href={{pathFor "/groups"}}>
                     <i class="group icon"></i>
                 </a>
             </div>
             <div class="item">
-                <a class="ui icon button" href={{pathFor "logout"}}>
+                <a class="ui icon button" href={{pathFor "/logout"}}>
                     <i class="sign out icon"></i>
                 </a>
             </div>
@@ -29,13 +29,13 @@
         {{else}}
         
             <div class="item">
-                <a class="ui button" href={{pathFor "login"}}>
+                <a class="ui button" href={{pathFor "/login"}}>
                     <i class="sign in icon"></i>
                     Log in
                 </a>
             </div>
             <div class="item">
-                <a class="ui primary button" href={{pathFor "register"}}>
+                <a class="ui primary button" href={{pathFor "/register"}}>
                     <i class="add user icon"></i>
                     Sign Up
                 </a>
@@ -46,12 +46,12 @@
 
 <template name="verticalMenuButtons">
     {{#if currentUser}}
-        <a class="item" href={{pathFor "profile"}}>Profile</a>
-        <a class="item" href={{pathFor "preferences"}}>Preferences</a>
-        <a class="item" href={{pathFor "logout"}}>Log out</a>
+        <a class="item" href={{pathFor "/profile"}}>Profile</a>
+        <a class="item" href={{pathFor "/preferences"}}>Preferences</a>
+        <a class="item" href={{pathFor "/logout"}}>Log out</a>
     {{else}}
-        <a class="item" href={{pathFor "login"}}>Log in</a>
-        <a class="item" href={{pathFor "register"}}>Sign Up</a>
+        <a class="item" href={{pathFor "/login"}}>Log in</a>
+        <a class="item" href={{pathFor "/register"}}>Sign Up</a>
     {{/if}}
 </template>
 

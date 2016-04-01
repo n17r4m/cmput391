@@ -79,6 +79,15 @@ Running:
 
 meteor --port $IP:$PORT
 
+
+--Installation Guide</H3>
+
+    # install meteor
+    curl https://install.meteor.com/ | sh
+
+    The application and website can be hosted on meteor servers by running the Makefile that is attached 
+    to the submission.
+
 Schema:
 
 db = {

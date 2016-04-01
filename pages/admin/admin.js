@@ -11,6 +11,8 @@ if(Meteor.isClient){
     var DATE_RANGE_FORMAT = "MM/DD/YYYY"
     
     Template.admin.onRendered(function(){
+        Session.setDefault("allsubject", false)
+        Session.setDefault("alluser", false)
         Session.setDefault("admin.user", "");
         Session.setDefault("admin.subject", "");
         Session.setDefault("admin.timespan", "all");
@@ -20,9 +22,18 @@ if(Meteor.isClient){
             showDropdowns: true,
         })
         this.$('.ui.dropdown').dropdown()
+        this.$('.ui.checkbox').checkbox()
     })
     
     Template.admin.helpers({
+        
+        allsubject: function(){
+            return Session.get("admin.allsubject")
+        },
+        
+        alluser: function(){
+            return Session.get("admin.alluser")
+        },
         
         calendar: function(m){ 
             return moment(m).calendar() 
@@ -36,9 +47,17 @@ if(Meteor.isClient){
                 
         },
         
+        timespanIs: function(ts){
+            return Session.equals("admin.timespan", ts)
+        },
+        
         user: function(){ 
             return DB.Users.findOne({username: Session.get("admin.user")}) 
         }, 
+        
+        users: function(){
+            return DB.Users.find().fetch().map(function(user){ return user.username })
+        },
         
         userNotFound: function(){
             return Session.get("admin.user") 
@@ -46,6 +65,15 @@ if(Meteor.isClient){
         },
         
         subject: function(){ return Session.get("admin.subject") },
+        
+        subjects: function(){
+            return DB.Images.find().fetch().reduce(function(subjects, img){
+                if(!~subjects.indexOf(img.metadata.title)){
+                    subjects.push(img.metadata.title)
+                }
+                return subjects
+            }, [])
+        },
         
         timeslots: function(){
             var daterange = Session.get("admin.daterange")
@@ -83,9 +111,16 @@ if(Meteor.isClient){
             return []
         },
         
-        numimages: function(start, end){
-            var user = DB.Users.findOne({username: Session.get("admin.user")}) 
-            var subject = Session.get("admin.subject")
+        numimages: function(start, end, props){
+            
+            function prop(name){
+                return props && props.hash && props.hash[name]
+            }
+            
+            console.info(props.hash)
+            
+            var user = DB.Users.findOne({username: prop("user") || Session.get("admin.user")}) 
+            var subject = prop("subject") || Session.get("admin.subject")
             var query = {
                 "metadata.date": {$gte: start.toDate(), $lt: end.toDate() }
             }
@@ -98,10 +133,16 @@ if(Meteor.isClient){
     
     
     Template.admin.events({
-        'click, change input[name=user]': function(event, template){
+        'change input.allsubject': function(event, template){
+            Session.set("admin.allsubject", $(event.currentTarget).is(":checked"))
+        },
+        'change input.alluser': function(event, template){
+            Session.set("admin.alluser", $(event.currentTarget).is(":checked"))
+        },
+        'change input[name=user]': function(event, template){
             Session.set("admin.user", template.$("input[name=user]").val())
         },
-        'click, change input[name=subject]': function(event, template){
+        'change input[name=subject]': function(event, template){
             Session.set("admin.subject", template.$("input[name=subject]").val())
         },
         'change select[name=timespan]': function(event, template){

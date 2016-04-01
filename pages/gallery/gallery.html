@@ -13,20 +13,27 @@
 
 
 <template name="galleryFilterBar">
+  
   <div class="ui secondary pointing menu">
     
+    <!-- left menu -->
     {{#if keywords}}
       <a class="item {{ isActivePath regex='/today' }}" href={{ pathFor 'gallery_when_kw' when='today' keywords=keywords }}>Today</a>
       <a class="item {{ isActivePath regex='/week' }}" href={{ pathFor 'gallery_when_kw' when='week' keywords=keywords }}>Week</a>
       <a class="item {{ isActivePath regex='/month' }}" href={{ pathFor 'gallery_when_kw' when='month' keywords=keywords }}>Month</a>
-      <a class="item {{ isActivePath regex='/all' }}" href={{ pathFor 'gallery_when_kw' when='all' keywords=keywords }}>All Time</a>
     {{else}}
       <a class="item {{ isActivePath regex='/today' }}" href={{ pathFor 'gallery_when' when='today' }}>Today</a>
       <a class="item {{ isActivePath regex='/week' }}" href={{ pathFor 'gallery_when' when='week' }}>Week</a>
       <a class="item {{ isActivePath regex='/month' }}" href={{ pathFor 'gallery_when' when='month' }}>Month</a>
-      <a class="item {{ isActivePath regex='/all' }}" href={{ pathFor 'gallery_when' when='all' }}>All Time</a>
     {{/if}}
-    
+    <a class="item range {{ isActivePath regex='/[0-9.-]' }}">
+      <i class="calendar icon"></i>
+      <input type="text" style="visibility: hidden; width: 1px; margin: 0px; border: none;" class="ui range" name="when" value={{whenvalue}}>
+    </a>
+    <!-- / left menu -->
+      
+      
+    <!-- right menu -->
     <div class="right menu">
       <div class="item">
         <div class="ui transparent icon input">
@@ -35,24 +42,29 @@
         </div>
       </div>
     </div>
+    <!-- / right menu -->
     
   </div>
+  
+  <!-- second menu -->
   <div class="ui secondary menu form">
     <div class="inline fields item">
       <label for="order">Order By:</label>
       <div class="field">
         <div class="ui radio checkbox newest">
           <input class="hidden" name="order" checked={{isNewest}} value="-1" type="radio">
-          <label>Newest</label>
+          <label>New</label>
         </div>
       </div>
       <div class="field">
         <div class="ui radio checkbox oldest">
           <input class="hidden" name="order" checked={{isOldest}} value="1" type="radio">
-          <label>Oldest</label>
+          <label>Old</label>
         </div>
       </div>
     </div>
-    
   </div>
+  <!-- /second menu -->
+  
+  
 </template>

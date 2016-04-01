@@ -21,11 +21,25 @@ if (Meteor.isClient){
         this.$('.ui.dropdown').dropdown()
     })
     
+
+    Template.upload.helpers({
+        today: function(){
+          return moment().format("MM/DD/YYYY")  
+        },
+        isGroupPermitted: function(){
+            return Session.get("upload.group")
+        },
+        images: function(){
+            // images uploaded in this session
+            return DB.Images.find({_id: {$in: Session.get("upload.images")}})
+        }
+    })
+
     
     Template.upload.events({
         'change select[name=permitted]': function(event, template){
             var isGroup = $(event.currentTarget).val() == "group"
-            Session.set("editimage.group", isGroup)
+            Session.set("upload.group", isGroup)
             if(!isGroup){
                 $(".privacy.field .ui.dropdown.selection").each(function(){
                     if($(this).find("select[name=permitted]").length == 0){
@@ -65,18 +79,6 @@ if (Meteor.isClient){
         }, 500)
     });
     
-    Template.upload.helpers({
-        today: function(){
-          return moment().format("MM/DD/YYYY")  
-        },
-        isGroupPermitted: function(){
-            return Session.get("upload.group")
-        },
-        images: function(){
-            // images uploaded in this session
-            return DB.Images.find({_id: {$in: Session.get("upload.images")}})
-        }
-    })
     
     Template.uploadGroupDropdown.onRendered(function(){
         this.$('.ui.dropdown').dropdown()

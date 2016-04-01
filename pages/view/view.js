@@ -24,7 +24,7 @@ if(Meteor.isClient){
         calendar: function(){ return moment(this.metadata.date).calendar(null) },
         owner:    function(){ return DB.Users.findOne(this.owner).username },
         image:    function(){ return DB.Images.findOne(Session.get("view.image")) },
-        isOwner:  function(){ return Meteor.userId() == this.owner },
+        isOwner:  function(){ return Meteor.isAdmin() || Meteor.userId() == this.owner },
         editing:  function(){ return Session.equals("view.edit", true) } 
     })
     
@@ -43,6 +43,7 @@ if(Meteor.isClient){
     })
     
     Template.editimage.onRendered(function(){
+        Session.set("editimage.group", null)
         this.$('input[name="date"]').daterangepicker({
             singleDatePicker: true,
             showDropdowns: true,
@@ -52,11 +53,16 @@ if(Meteor.isClient){
     
     Template.editimage.helpers({
         dateformatted: function(){
-            console.info(this.date)
             return moment(this.date).format("MM/DD/YYYY")
         },
+        isPermitted: function(opt){
+          return this.permitted == opt  
+        },
         isGroupPermitted: function(){
-            return Session.get("editimage.group")
+            return (
+                this.permitted == "group" 
+                && Session.equals("editimage.group", null)
+            ) || Session.get("editimage.group") 
         },
         groups: function(){
             return Roles.getGroupsForUser(Meteor.userId()) 
@@ -106,7 +112,10 @@ if(Meteor.isClient){
     Template.editImageGroupDropdown.helpers({
         groups: function(){
             return Roles.getRolesForUser(Meteor.userId()) 
-        }
+        },
+        isGroup: function(imgGroup, thisGroup){
+            return imgGroup == thisGroup
+        },
     })
 
     

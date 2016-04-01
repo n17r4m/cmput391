@@ -59,9 +59,12 @@ if(Meteor.isClient){
         Meteor.subscribe("allUserData");
     });
     
-    // https://github.com/kadirahq/flow-router/issues/153
-    Template.registerHelper("accessDenied", function() {
-        FlowRouter.go("/prohibited");
+    Template.registerHelper("isAdmin", function() {
+        return Meteor.isAdmin()
     });    
+    
+    Meteor.isAdmin = function(){
+        return Meteor.user() && Meteor.user().username == "Admin"
+    }
     
 }

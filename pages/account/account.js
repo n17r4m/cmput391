@@ -1,6 +1,7 @@
 AccountsTemplates.configure({
     
     // layout 
+    defaultLayoutType: 'blaze',
     defaultLayout: 'applicationLayout',
     defaultLayoutRegions: {},
     defaultContentRegion: 'main',
@@ -129,30 +130,21 @@ AccountsTemplates.addField({
 
 
 AccountsTemplates.configureRoute('signIn', {
-  layoutType: 'blaze',
   name: 'signin',
   path: '/login',
-  template: 'login',
-  layoutRegions: {},
-  contentRegion: 'main'
+  template: 'login'
 });
 
 AccountsTemplates.configureRoute('signUp', {
-  layoutType: 'blaze',
   name: 'signup',
   path: '/register',
-  template: 'register',
-  layoutRegions: {},
-  contentRegion: 'main'
+  template: 'register'
 });
 
 AccountsTemplates.configureRoute('forgotPwd', {
-  layoutType: 'blaze',
   name: 'forgotPassword',
   path: '/forgotPassword',
-  template: 'forgotPassword',
-  layoutRegions: {},
-  contentRegion: 'main'
+  template: 'forgotPassword'
 });
 
 FlowRouter.route('/logout', {

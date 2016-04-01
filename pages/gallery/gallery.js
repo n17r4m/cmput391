@@ -1,18 +1,9 @@
 
-var whens = Object.create(null);
-whens.hot = {}
-whens.week = {}
-whens.month = {}
-whens.all = {}
-
 
 var setSession = function(params, queryParams){
     if(Meteor.isClient){
-        console.info(params)
-        if(whens[params.when]){
+        if(params.when){
             Session.set("gallery.when", params.when)
-        } else {
-            Session.set("gallery.when", "today")
         }
         if(params.keywords){
             Session.set("gallery.keywords", params.keywords)
@@ -31,24 +22,6 @@ FlowRouter.route('/gallery', {
     name: "gallery"
 });
 
-/*
-FlowRouter.route('/group', {
-    action: function(params, queryParams) {
-        setSession(params, queryParams);
-        FlowRouter.redirect('/gallery'); // not a typo    
-    },
-    name: "groop" // not a typo
-});
-
-FlowRouter.route('/group/:group', {
-    action: function(params, queryParams) {
-        setSession(params, queryParams);
-        FlowRouter.redirect('/group/' + params.group + '/hot');    
-    },
-    name: "gallery_group_redirect"
-});
-*/
-
 
 FlowRouter.route('/gallery/:when', {
     action: function(params, queryParams) {
@@ -66,30 +39,15 @@ FlowRouter.route('/gallery/:when/:keywords', {
     name: "gallery_when_kw"
 });
 
-/*
-FlowRouter.route('/group/:group/:when', {
-    action: function(params, queryParams) {
-        setSession(params, queryParams)
-        BlazeLayout.render('applicationLayout', { main: "gallery"});
-    },
-    name: "gallery_group"
-});
-
-FlowRouter.route('/group/:group/:when/:keywords', {
-    action: function(params, queryParams) {
-        setSession(params, queryParams)
-        BlazeLayout.render('applicationLayout', { main: "gallery"});
-    },
-    name: "gallery_group_kw"
-});
-*/
 
 if (Meteor.isClient){
+    
+    var DATE_RANGE_URL_FORMAT = "MM.DD.YYYY"
+    var DATE_RANGE_VAL_FORMAT = "MM/DD/YYYY"
     
     Template.gallery.helpers({
         images: function(template){
             
-                        
             var when = Session.get("gallery.when")
             var order = Session.get("gallery.order")
             var keywords = Session.get("gallery.keywords")
@@ -119,32 +77,27 @@ if (Meteor.isClient){
             
             var query = {}
             switch(when){
-                case "today":
-                    query["metadata.date"] = { $gte: moment().subtract(1, "days").toDate() }
-                    break;
-                case "week":
-                    query["metadata.date"] = { $gte: moment().subtract(1, "weeks").toDate() }
-                    break;
-                case "month":
-                    query["metadata.date"] = { $gte: moment().subtract(1, "months").toDate() }
-                    break;
-                case "all":
+                case "today": query["metadata.date"] = { $gte: moment().subtract(1, "days").toDate() };   break;
+                case "week":  query["metadata.date"] = { $gte: moment().subtract(1, "weeks").toDate() };  break;
+                case "month": query["metadata.date"] = { $gte: moment().subtract(1, "months").toDate() }; break;
                 default:
-                    break;
+                    var daterange = when.split("-")
+                        .map(function(date){ 
+                            return moment(date, DATE_RANGE_URL_FORMAT).toDate()
+                        })
+                    query["metadata.date"] = { $gte: daterange[0], $lte: daterange[1] }
             }
             
-            query.$or = [
-                { "owner": Meteor.userId() },
-                { "metadata.permitted": "public" },
-                { $and: [
-                    { "metadata.permitted": "group" },
-                    { "metadata.group": { $in: Roles.getRolesForUser(Meteor.userId()) } }
-                ]}
-            ]
-            
-            
-            
-            console.info(order, query, keywords)
+            if(!Meteor.isAdmin()){
+                query.$or = [
+                    { "owner": Meteor.userId() },
+                    { "metadata.permitted": "public" },
+                    { $and: [
+                        { "metadata.permitted": "group" },
+                        { "metadata.group": { $in: Roles.getRolesForUser(Meteor.userId()) } }
+                    ]}
+                ]
+            }
             
             return DB.Images
                 .find(query, {sort: {"metadata.date": order}})
@@ -154,15 +107,15 @@ if (Meteor.isClient){
             
         }
     })
+
+
     
-    var searchEvent = debounce(function(event, template){
-        // todo: throttle
+    var quickSearchEvent = function(event, template){
         if(event){ event.preventDefault() }
         template = template || window
         
         var order = template.$(".ui.checkbox.radio.newest").checkbox("is checked") ? -1 : 1
         Session.set("gallery.order", order)
-        console.info(order)
         
         var keywords = template.$("input[name=keywords]").val()
             .replace(/[^a-z 0-9]/g, "")
@@ -174,30 +127,59 @@ if (Meteor.isClient){
         } else {
             FlowRouter.redirect("/gallery/" + Session.get("gallery.when"))
         }
-    }, 1500)
-    
+    }
+    var slowSearchEvent = debounce(quickSearchEvent, 1500)
 
+    Template.galleryFilterBar.onRendered(function(){
+        this.$('.ui.radio.checkbox').checkbox({
+            onChange: quickSearchEvent
+        })
+        this.$('input.range').daterangepicker({
+            singleDatePicker: false,
+            showDropdowns: true
+        })
+    })
 
     Template.galleryFilterBar.helpers({
-        //group: function() { return Session.get("gallery.group") },
-        //isGroup: function() { return Session.equals("gallery.mode", "group") },
         keywords: function() { return Session.get("gallery.keywords") },
         keywordsvalue: function() { return Session.get("gallery.keywords").split(",").join(" ") },
-        getDate: function(){ return new Date(); },
+        when: function() { return Session.get("when") },
+        whenvalue: function() { 
+            switch(Session.get("gallery.when")){
+                case "today": 
+                    return moment().subtract(1, "days").format(DATE_RANGE_VAL_FORMAT)
+                        + " - " + moment().format(DATE_RANGE_VAL_FORMAT)
+                case "week":
+                    return moment().subtract(1, "weeks").format(DATE_RANGE_VAL_FORMAT)
+                        + " - " + moment().format(DATE_RANGE_VAL_FORMAT)
+                case "month":
+                    return moment().subtract(1, "months").format(DATE_RANGE_VAL_FORMAT)
+                        + " - " + moment().format(DATE_RANGE_VAL_FORMAT)
+                default:
+                    return Session.get("gallery.when")
+                        .split("-").join(" - ").replace(/\./g, "/")     
+            }
+        },
         isNewest: function(){ return Session.equals("gallery.order", -1) },
         isOldest: function(){ return Session.equals("gallery.order", 1) }
     })
-      
-     
-    Template.galleryFilterBar.onRendered(function(){
-        this.$('.ui.radio.checkbox').checkbox({
-            onChange: searchEvent
-        })
-    })
-       
+    
     Template.galleryFilterBar.events({
-        "click .search": searchEvent,
-        "keyup .search": searchEvent
+        "click .search": quickSearchEvent,
+        "keyup .search": slowSearchEvent,
+        "click a.range": function(event, template){
+            template.$('input.range').click()
+        },
+        "change input.range": function(event, template){
+            Session.set("gallery.when", template.$("input.range").val()
+                .split(" - ")
+                .map(function(date){ 
+                    return moment(date, DATE_RANGE_URL_FORMAT).format(DATE_RANGE_URL_FORMAT)
+                }).join("-")
+            )
+            quickSearchEvent(event, template)        
+        }
+            
     })
     
     
