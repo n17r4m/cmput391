@@ -117,8 +117,6 @@ if(Meteor.isClient){
                 return props && props.hash && props.hash[name]
             }
             
-            console.info(props.hash)
-            
             var user = DB.Users.findOne({username: prop("user") || Session.get("admin.user")}) 
             var subject = prop("subject") || Session.get("admin.subject")
             var query = {
